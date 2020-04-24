@@ -22,6 +22,7 @@ comments = ['Nice shot! @{}',
 
 tags = ['engineer', 'bootstrap4', 'natgeo', 'biomedical', 'KU', 'python programming', 'BMW', 'iot', 'fashion',
         'web dev']
+smart_tags = ['science', 'arduino', 'cars', 'bikes']
 
 users_following = []
 a_users_followers = []
@@ -54,13 +55,15 @@ session = login(insta_username, insta_password)
 
 def general_settings():
     # general settings
-    session.set_dont_include(["friend1", "friend2", "friend3"])
     session.set_action_delays(enabled=True, follow=2)
 
 
-def activities():
+def liking_posts(hashtags):
     # activity
-    session.like_by_tags(["natgeo"], amount=10)
+    # takes in a list of tags and generates smart tags
+    # with banned and spammy tags filtered out
+    session.set_smart_hashtags(hashtags, limit=5, sort='top', log_tags=True)
+    session.like_by_tags(amount=10, use_smart_hashtags=True)
 
 
 def engagement_pods():
@@ -73,9 +76,10 @@ def engagement_pods():
                  u"😁😁😁", u"😂", u"🤓🤓🤓🤓🤓", u"👏🏼😉"], media="Photo")
 
 
-def join_pods():
+def join_pods(hashtags):
     # session.join_pods(topic='sports', engagement_mode='no_comments')
-    session.follow_by_tags(tags, amount=2)
+    # takes in a list of hashtags and follows
+    session.follow_by_tags(hashtags, amount=2)
 
 
 def interacting_with_certain_user_followers(user_names):
@@ -90,10 +94,12 @@ def interacting_with_certain_user_followers(user_names):
 
 
 def follow_a_users_followers(user_names):
+    # interacts with given username(s) and follows their followers
     session.follow_user_followers(user_names, amount=5, randomize=True, sleep_delay=600)
 
 
 def follow_a_users_following(user_names):
+    # interacts with given username(s) and follows people they are following
     session.follow_user_following(user_names, amount=5, randomize=True, sleep_delay=600)
 
 
@@ -101,9 +107,9 @@ def follow_a_users_following(user_names):
 with smart_run(session):
     """ Activity flow """
     general_settings()
-    activities()
+    liking_posts(smart_tags)
     engagement_pods()
-    join_pods()
+    join_pods(tags)
     interacting_with_certain_user_followers(users_following)
     follow_a_users_followers(a_users_followers)
     follow_a_users_following(a_users_following)
