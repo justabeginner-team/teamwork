@@ -24,6 +24,8 @@ tags = ['engineer', 'bootstrap4', 'natgeo', 'biomedical', 'KU', 'python programm
         'web dev']
 
 users_following = []
+a_users_followers = []
+a_users_following = []
 
 # get an InstaPy session!
 # set headless_browser=True to run InstaPy in the background
@@ -76,14 +78,23 @@ def join_pods():
     session.follow_by_tags(tags, amount=2)
 
 
-def interacting_with_certain_user_followers(users_names_list):
+def interacting_with_certain_user_followers(user_names):
+    # we will have web form asking for user input to fill this list
     # interacting with someone else's followers
     session.set_user_interact(amount=5, percentage=50, media=None)
     session.set_do_like(enabled=True, percentage=70)
     session.set_do_comment(True, percentage=50)
     session.set_comments(comments, media='Photo')
     session.set_comments(['Awesome video @{}'], media='Video')
-    session.interact_user_following(users_names_list, amount=5, randomize=True)
+    session.interact_user_following(user_names, amount=5, randomize=True)
+
+
+def follow_a_users_followers(user_names):
+    session.follow_user_followers(user_names, amount=5, randomize=True, sleep_delay=600)
+
+
+def follow_a_users_following(user_names):
+    session.follow_user_following(user_names, amount=5, randomize=True, sleep_delay=600)
 
 
 # let's go now
@@ -94,6 +105,8 @@ with smart_run(session):
     engagement_pods()
     join_pods()
     interacting_with_certain_user_followers(users_following)
+    follow_a_users_followers(a_users_followers)
+    follow_a_users_following(a_users_following)
 
 # NOTE:i have commented out session.end() because when the suite under line 47 starting with "with"...
 # the program will be terminated automatically....that's what with means
