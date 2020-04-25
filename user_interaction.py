@@ -54,12 +54,13 @@ def login(username, password):
 session = login(insta_username, insta_password)
 
 
-def quota_supervision(session):
+def quota_supervision():
     # enabled set to true to acivate false to deactivate supervising any time
     # peak likes ...once likes reach peak ,it will jump every other like yet do available tasks
     # only sever calls does not jump  it exits the program once it reaches peak
     # it will jump comments too  snce since commenting without a like isnt welcomed
-    # sleep after for putting instapy to sleep after reaching peak rather than jumping actions or exiting for server calls
+    # sleep after for putting instapy to sleep after reaching peak
+    # rather than jumping actions or exiting for server calls
     session.set_quota_supervisor(enabled=True, sleep_after=["likes", "comments_d", "follows", "unfollows", "server_calls_h"],
                                  sleepyhead=True, 
                                  stochastic_flow=True, 
@@ -77,12 +78,12 @@ def quota_supervision(session):
                                  )
 
 
-def general_settings(session):
+def general_settings():
     # general settings
     session.set_action_delays(enabled=True, follow=2)
 
 
-def liking_posts(session,hashtags):
+def liking_posts(hashtags):
     # activity
     # takes in a list of tags and generates smart tags
     # with banned and spammy tags filtered out
@@ -90,7 +91,7 @@ def liking_posts(session,hashtags):
     session.like_by_tags(amount=10, use_smart_hashtags=True)
 
 
-def engagement_pods(session):
+def engagement_pods():
     # Joining Engagement Pods
     session.set_do_comment(enabled=True, percentage=35)
     session.set_comments(comments)
@@ -100,73 +101,76 @@ def engagement_pods(session):
                  u"😁😁😁", u"😂", u"🤓🤓🤓🤓🤓", u"👏🏼😉"], media="Photo")
 
 
-def join_pods(session,hashtags):
-    #engagement modes
-    #'no_comments' receives zero comments on your post from pod members
-    #'light'  encourages approximately 10% of pod members to comment on your post
-    #'normal' 30%
-    #heavy 90%
+def join_pods(hashtags):
+    # engagement modes
+    # 'no_comments' receives zero comments on your post from pod members
+    # 'light'  encourages approximately 10% of pod members to comment on your post
+    # 'normal' 30%
+    # heavy 90%
     session.join_pods(topic='sports', engagement_mode='no_comments')
     # takes in a list of hashtags and follows
     session.follow_by_tags(hashtags, amount=2)
 
 
-def interacting_with_certain_user_followers(session,user_names):
+def interacting_with_certain_user_followers(user_names):
     # we will have web form asking for user input to fill this list
     # interacting with someone else's followers
     session.set_user_interact(amount=5, percentage=50, media=None)
-    #add story watching while interacting with users
-    #simulate=false is the safest setting as it disables all additional simulated interactions
+    # add story watching while interacting with users
+    # simulate=false is the safest setting as it disables all additional simulated interactions
     session.set_do_story(enabled=True,percentage=70,simulate=False)
     session.set_do_like(enabled=True, percentage=70)
     session.set_do_comment(True, percentage=50)
     session.set_comments(comments, media='Photo')
     session.set_comments(['Awesome video @{}'], media='Video')
     session.interact_user_following(user_names, amount=5, randomize=True)
-#watching stories by hash tags
-def veiw_stories(session,smart_tags):
+
+
+# watching stories by hash tags
+def view_stories(smart_tags):
     session.story_by_tags(smart_tags)
 
-#watching stories from users
-def veiw_stories_from_users(session,users):
-    #take users list
+
+# watching stories from users
+def view_stories_from_users(users):
+    # take users list
     session.story_by_users(users)
 
 
-def follow_a_users_followers(session,user_names):
+def follow_a_users_followers(user_names):
     # interacts with given username(s) and follows their followers
     session.follow_user_followers(user_names, amount=5, randomize=True, sleep_delay=600)
 
 
-def follow_a_users_following(session,user_names):
+def follow_a_users_following(user_names):
     # interacts with given username(s) and follows people they are following
     session.follow_user_following(user_names, amount=5, randomize=True, sleep_delay=600)
 
 
-def acceptFollowRequests(session):
+def acceptFollowRequests():
     # amount the maximum amount of follow requests to accept
     # sleep_delay time to sleep after every accepted request
     session.accept_follow_requests(amount=100, sleep_delay=1)
 
 
-def ignore_restrictions(session):
+def ignore_restrictions():
     # will ignore the don't like if the description contains
     # one of the given words
     session.set_ignore_if_contains(['glutenfree', 'french', 'tasty'])
 
 
 # let's go now
-with smart_run(session):
+with smart_run():
     """ Activity flow """
-    general_settings(session)
-    liking_posts(session, smart_tags)
-    engagement_pods(session)
-    join_pods(session, tags)
-    interacting_with_certain_user_followers(session, users_following)
-    follow_a_users_followers(session, a_users_followers)
-    follow_a_users_following(session, a_users_following)
-    acceptFollowRequests(session)
-    ignore_restrictions(session)
+    general_settings()
+    liking_posts(smart_tags)
+    engagement_pods()
+    join_pods(tags)
+    interacting_with_certain_user_followers(users_following)
+    follow_a_users_followers(a_users_followers)
+    follow_a_users_following(a_users_following)
+    acceptFollowRequests()
+    ignore_restrictions()
 
 # NOTE:i have commented out session.end() because when the suite under line 47 starting with "with"...
 # the program will be terminated automatically....that's what with means
