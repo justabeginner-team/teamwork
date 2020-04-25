@@ -115,11 +115,22 @@ def interacting_with_certain_user_followers(session,user_names):
     # we will have web form asking for user input to fill this list
     # interacting with someone else's followers
     session.set_user_interact(amount=5, percentage=50, media=None)
+    #add story watching while interacting with users
+    #simulate=false is the safest setting as it disables all additional simulated interactions
+    session.set_do_story(enabled=True,percentage=70,simulate=False)
     session.set_do_like(enabled=True, percentage=70)
     session.set_do_comment(True, percentage=50)
     session.set_comments(comments, media='Photo')
     session.set_comments(['Awesome video @{}'], media='Video')
     session.interact_user_following(user_names, amount=5, randomize=True)
+#watching stories by hash tags
+def veiw_stories(session,smart_tags):
+    session.story_by_tags(smart_tags)
+
+#watching stories from users
+def veiw_stories_from_users(session,users):
+    #take users list
+    session.story_by_users(users)
 
 
 def follow_a_users_followers(session,user_names):
