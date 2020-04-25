@@ -27,6 +27,7 @@ smart_tags = ['science', 'arduino', 'cars', 'bikes']
 users_following = []
 a_users_followers = []
 a_users_following = []
+a_users_view_story_list = []
 
 # get an InstaPy session!
 # set headless_browser=True to run InstaPy in the background
@@ -127,8 +128,8 @@ def interacting_with_certain_user_followers(user_names):
 
 
 # watching stories by hash tags
-def view_stories(smart_tags):
-    session.story_by_tags(smart_tags)
+def view_stories(hashtags):
+    session.story_by_tags(hashtags)
 
 
 # watching stories from users
@@ -171,6 +172,8 @@ with smart_run():
     follow_a_users_following(a_users_following)
     acceptFollowRequests()
     ignore_restrictions()
+    view_stories(smart_tags)
+    view_stories_from_users(a_users_view_story_list)
 
 # NOTE:i have commented out session.end() because when the suite under line 47 starting with "with"...
 # the program will be terminated automatically....that's what with means
