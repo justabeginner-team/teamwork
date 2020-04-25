@@ -31,7 +31,7 @@ a_users_following = []
 # get an InstaPy session!
 # set headless_browser=True to run InstaPy in the background
 # set bypass_security_challenge_using='email' to bypass any suspicious login attempt challenge
-#can also use "bypass_security_challenge_using='sms'"
+# can also use "bypass_security_challenge_using='sms'
 # set  want_check_browser=False to override checks like being online,
 # my connection and the availability of instagram severs
 
@@ -53,13 +53,13 @@ def login(username, password):
 # assigning the returned value by the login function to session
 session = login(insta_username, insta_password)
 
-def quota_supervion(session):
-    #enabled set to true to acivate false to deactivate supervising any time
-    #peak likes ...once likes reach peak ,it will jump every other like yet do available tasks
-         #only sever calls does not jump  it exits the program once it reaches peak
-         #it will jump comments too  snce since commenting without a like isnt welcomed
-     #sleep after for putting instapy to sleep after reaching peak rather than jumping actions or exiting for server calls
-     #     
+
+def quota_supervision(session):
+    # enabled set to true to acivate false to deactivate supervising any time
+    # peak likes ...once likes reach peak ,it will jump every other like yet do available tasks
+    # only sever calls does not jump  it exits the program once it reaches peak
+    # it will jump comments too  snce since commenting without a like isnt welcomed
+    # sleep after for putting instapy to sleep after reaching peak rather than jumping actions or exiting for server calls
     session.set_quota_supervisor(enabled=True, sleep_after=["likes", "comments_d", "follows", "unfollows", "server_calls_h"],
                                  sleepyhead=True, 
                                  stochastic_flow=True, 
@@ -75,6 +75,7 @@ def quota_supervion(session):
                                  peak_server_calls_hourly=None,
                                  peak_server_calls_daily=4700
                                  )
+
 
 def general_settings(session):
     # general settings
@@ -130,25 +131,31 @@ def follow_a_users_following(session,user_names):
     # interacts with given username(s) and follows people they are following
     session.follow_user_following(user_names, amount=5, randomize=True, sleep_delay=600)
 
+
 def acceptFollowRequests(session):
-    #amount the maximum amount of follow requests to accept
-    #sleep_delay time to sleep after every accepted request
+    # amount the maximum amount of follow requests to accept
+    # sleep_delay time to sleep after every accepted request
     session.accept_follow_requests(amount=100, sleep_delay=1)
+
 
 def ignore_restrictions(session):
     # will ignore the don't like if the description contains
     # one of the given words
     session.set_ignore_if_contains(['glutenfree', 'french', 'tasty'])
+
+
 # let's go now
 with smart_run(session):
     """ Activity flow """
-    general_settings()
-    liking_posts(smart_tags)
-    engagement_pods()
-    join_pods(tags)
-    interacting_with_certain_user_followers(users_following)
-    follow_a_users_followers(a_users_followers)
-    follow_a_users_following(a_users_following)
+    general_settings(session)
+    liking_posts(session, smart_tags)
+    engagement_pods(session)
+    join_pods(session, tags)
+    interacting_with_certain_user_followers(session, users_following)
+    follow_a_users_followers(session, a_users_followers)
+    follow_a_users_following(session, a_users_following)
+    acceptFollowRequests(session)
+    ignore_restrictions(session)
 
 # NOTE:i have commented out session.end() because when the suite under line 47 starting with "with"...
 # the program will be terminated automatically....that's what with means
