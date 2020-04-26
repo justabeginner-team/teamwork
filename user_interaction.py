@@ -22,12 +22,18 @@ comments = ['Nice shot! @{}',
 
 tags = ['engineer', 'bootstrap4', 'natgeo', 'biomedical', 'KU', 'python programming', 'BMW', 'iot', 'fashion',
         'web dev']
-smart_tags = ['science', 'arduino', 'cars', 'bikes']
+smart_tags = ['science', 'arduino', 'cars', 'bikes']  # list for generating smart hashtags
 
-users_following = []
-a_users_followers = []
-a_users_following = []
-a_users_view_story_list = []
+users_following = []  # list containing usernames whose followers
+# we want to interact like, comment, view story
+a_users_followers = []  # list containing usernames whose followers we want to follow
+a_users_following = []  # list with usernames whose following we want to follow
+a_users_view_story_list = []  # usernames we want to view stories
+dont_like_tags = []  # list with tags not to like
+ignore_dont_like_tags = []  # contains words to search for in description to ignore don't like
+users_to_ignore = []  # lists of usernames to ignore liking images from
+friends_list = []  # contains a list of friends to prevent commenting on or unfollowing them
+
 
 # get an InstaPy session!
 # set headless_browser=True to run InstaPy in the background
@@ -62,9 +68,10 @@ def quota_supervision():
     # it will jump comments too  snce since commenting without a like isnt welcomed
     # sleep after for putting instapy to sleep after reaching peak
     # rather than jumping actions or exiting for server calls
-    session.set_quota_supervisor(enabled=True, sleep_after=["likes", "comments_d", "follows", "unfollows", "server_calls_h"],
-                                 sleepyhead=True, 
-                                 stochastic_flow=True, 
+    session.set_quota_supervisor(enabled=True,
+                                 sleep_after=["likes", "comments_d", "follows", "unfollows", "server_calls_h"],
+                                 sleepyhead=True,
+                                 stochastic_flow=True,
                                  notify_me=True,
                                  peak_likes_hourly=57,
                                  peak_likes_daily=585,
@@ -79,9 +86,52 @@ def quota_supervision():
                                  )
 
 
-def general_settings():
+def general_settings(ignore_hashtags, words, ignore_users, friends):
     # general settings
-    session.set_action_delays(enabled=True, follow=2)
+    session.set_action_delays(enabled=True, follow=9, like=5.5, comment=9)
+    # restricting likes
+    session.set_dont_like(ignore_hashtags)
+    # ignoring restrictions
+    # ignores don't like if description contains one of the included words
+    session.set_ignore_if_contains(words)
+    # completely ignores liking images from certain users
+    session.set_ignore_users(ignore_users)
+    # excluding friends prevents commenting on and unfollowing good friends
+    # note image is still liked
+    session.set_dont_include(friends)
+    # preventing active users (liked 5 latest posts)
+    session.set_dont_unfollow_active_users(enabled=True, posts=5)
+    # skipping users with private, no profile pic and business accounts
+    session.set_skip_users(skip_private=False,
+                           private_percentage=100,
+                           skip_no_profile_pic=False,
+                           no_profile_pic_percentage=100,
+                           skip_business=False,
+                           skip_non_business=False,
+                           business_percentage=100,  # this works only if skip business categories
+                           # or don't skip biz categories are provided
+                           skip_business_categories=[],
+                           dont_skip_business_categories=[])
+    # liking a post based on number of likes a post has
+    # one can use both max & min values or one of them,
+    # None is assigned to the value you don't want to check
+    session.set_delimit_liking(enabled=False, max_likes=5000, min_likes=None)
+    # commenting based on number of comments a post has
+    session.set_delimit_commenting(enabled=False, max_comments=None, min_comments=None)
+    # interactions based on number of followers, following and number of posts a user has
+    # delimit_by_numbers is used to activate & deactivate the usage of max & min values
+    # potency_ratio accepts values in 2 formats according to your style:
+    # positive (followers count is higher than following count) &
+    # negative (massive followers WHOSE following count is higher than followers count)
+    session.set_relationship_bounds(enabled=False,
+                                    potency_ratio=None,
+                                    delimit_by_numbers=True,
+                                    max_followers=8500,
+                                    max_following=4490,
+                                    min_followers=100,
+                                    min_following=56,
+                                    min_posts=10,
+                                    max_posts=1000)
 
 
 def liking_posts(hashtags):
@@ -119,7 +169,7 @@ def interacting_with_certain_user_followers(user_names):
     session.set_user_interact(amount=5, percentage=50, media=None)
     # add story watching while interacting with users
     # simulate=false is the safest setting as it disables all additional simulated interactions
-    session.set_do_story(enabled=True,percentage=70,simulate=False)
+    session.set_do_story(enabled=True, percentage=70, simulate=False)
     session.set_do_like(enabled=True, percentage=70)
     session.set_do_comment(True, percentage=50)
     session.set_comments(comments, media='Photo')
@@ -154,16 +204,10 @@ def acceptFollowRequests():
     session.accept_follow_requests(amount=100, sleep_delay=1)
 
 
-def ignore_restrictions():
-    # will ignore the don't like if the description contains
-    # one of the given words
-    session.set_ignore_if_contains(['glutenfree', 'french', 'tasty'])
-
-
 # let's go now
 with smart_run():
     """ Activity flow """
-    general_settings()
+    general_settings(dont_like_tags, ignore_dont_like_tags, users_to_ignore, friends_list)
     liking_posts(smart_tags)
     engagement_pods()
     join_pods(tags)
@@ -171,8 +215,7 @@ with smart_run():
     follow_a_users_followers(a_users_followers)
     follow_a_users_following(a_users_following)
     acceptFollowRequests()
-    ignore_restrictions()
-    view_stories(smart_tags)
+    view_stories(tags)
     view_stories_from_users(a_users_view_story_list)
 
 # NOTE:i have commented out session.end() because when the suite under line 47 starting with "with"...
