@@ -33,7 +33,9 @@ dont_like_tags = []  # list with tags not to like
 ignore_dont_like_tags = []  # contains words to search for in description to ignore don't like
 users_to_ignore = []  # lists of usernames to ignore liking images from
 friends_list = []  # contains a list of friends to prevent commenting on or unfollowing them
-
+specific_follow_list = []
+photo_likers_follow_list = []
+photo_commenter_follow_list = []
 
 # get an InstaPy session!
 # set headless_browser=True to run InstaPy in the background
@@ -206,6 +208,48 @@ def acceptFollowRequests():
     session.accept_follow_requests(amount=100, sleep_delay=1)
 
 
+def follow_by_list(username_list):
+    # follows specific usernames entered as a list
+    # the interact feature allows use of set_user_interact
+    # which interacts with the usernames after following them
+    session.set_user_interact(amount=4,
+                              percentage=50,
+                              randomize=True,
+                              media='Photo')
+    session.follow_by_list(followlist=username_list, ttimes=1, sleep_delay=600, interact=False)
+
+
+def follow_likers_of_users(username_list):
+    # follows people who like the photos of a specific username
+    # photograb amount is how many photos to grab from a users profile and analyze who liked it
+    # enabling interactions enables liking their photos too
+
+    session.follow_likers(username_list,
+                          photos_grab_amount=5,
+                          follow_likers_per_photo=5,  # how many people to follow per photo
+                          randomize=True,
+                          sleep_delay=600,  # defines breaktime after some good following
+                          interact=False)
+    session.set_user_interact(amount=2,
+                              percentage=70,
+                              randomize=True,
+                              media='Photo')
+
+
+def follow_commenters_of_photos_of_users(username_list):
+    # follows people who comment on photos of a specific username
+    session.follow_commenters(username_list,
+                              amount=50,  # how many people to follow
+                              daysold=5,  # will pick commenters no older than 5 daysold
+                              max_pic=5,  # limit of number of picks to analyze
+                              sleep_delay=600,
+                              interact=False)
+    session.set_user_interact(amount=3,
+                              percentage=32,
+                              randomize=True,
+                              media='Video')
+
+
 # let's go now
 with smart_run():
     """ Activity flow """
@@ -219,6 +263,9 @@ with smart_run():
     acceptFollowRequests()
     view_stories(tags)
     view_stories_from_users(a_users_view_story_list)
+    follow_by_list(specific_follow_list)
+    follow_likers_of_users(photo_likers_follow_list)
+    follow_commenters_of_photos_of_users(photo_commenter_follow_list)
 
 # NOTE:i have commented out session.end() because when the suite under line 47 starting with "with"...
 # the program will be terminated automatically....that's what with means
