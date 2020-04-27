@@ -33,9 +33,10 @@ dont_like_tags = []  # list with tags not to like
 ignore_dont_like_tags = []  # contains words to search for in description to ignore don't like
 users_to_ignore = []  # lists of usernames to ignore liking images from
 friends_list = []  # contains a list of friends to prevent commenting on or unfollowing them
-specific_follow_list = []
-photo_likers_follow_list = []
-photo_commenter_follow_list = []
+specific_follow_list = []  # people to follow
+photo_likers_follow_list = []  # follow people who like the photos of these people
+photo_commenter_follow_list = []  # follow people who comment the photos of these people
+custom_unfollow_list = []  # people to unfollow / unfollow if they don't follow back
 
 # get an InstaPy session!
 # set headless_browser=True to run InstaPy in the background
@@ -250,6 +251,54 @@ def follow_commenters_of_photos_of_users(username_list):
                               media='Video')
 
 
+#  unfollow features
+def unfollow_with_custom_list(custom_list):
+    # will unfollow all users in a given list not following me back if custom_list_param == nonfollowers
+    # if custom_list_param == all it will unfollow all the users in a given list
+    session.unfollow_users(amount=84, custom_list_enabled=False,
+                           custom_list=custom_list,
+                           custom_list_param="nonfollowers",  # or all
+                           style="RANDOM",
+                           unfollow_after=55 * 60 * 60,  # after 55 hours
+                           sleep_delay=600)
+
+
+def unfollow_followed_by_instapy():
+    # styles in unfollow_users
+    # with "FIFO", it will unfollow users in the exact order they are loaded
+    # ("FIFO" is the default style unless you change it);
+    # with "LIFO" it will unfollow users in the reverse order they were loaded;
+    # with "RANDOM" it will unfollow users in the shuffled order;
+    session.unfollow_users(amount=60,
+                           instapy_followed_enabled=True,
+                           instapy_followed_param="all",  # two options all and nonfollowers
+                           style="FIFO",   #
+                           unfollow_after=90 * 60 * 60,  # after 90 hours time in seconds
+                           sleep_delay=501)
+
+
+def unfollow_all_who_dont_follow_back():
+    session.unfollow_users(amount=126,
+                           nonFollowers=True,
+                           style="RANDOM",
+                           unfollow_after=42 * 60 * 60,  # fourty two hours
+                           sleep_delay=655)
+
+
+def just_unfollow_all():
+    # unfollows regardless is a user follows you or not
+    # You can choose unfollow style as "FIFO" (First-Input-First-Output)
+    # OR "LIFO" (Last-Input-First-Output) OR "RANDOM".
+    session.unfollow_users(amount=40,
+                           allFollowing=True,
+                           style="LIFO",
+                           unfollow_after=3 * 60 * 60,  # after three hours
+                           sleep_delay=450)
+
+# NOTE: You should know that, in one RUN, unfollow_users feature can take only one method from all 4 above.
+# That's why, it is best to disable other 3 methods while using a one:
+
+
 # let's go now
 with smart_run():
     """ Activity flow """
@@ -266,6 +315,10 @@ with smart_run():
     follow_by_list(specific_follow_list)
     follow_likers_of_users(photo_likers_follow_list)
     follow_commenters_of_photos_of_users(photo_commenter_follow_list)
+    unfollow_with_custom_list(custom_unfollow_list)
+    unfollow_followed_by_instapy()
+    unfollow_all_who_dont_follow_back()
+    just_unfollow_all()
 
 # NOTE:i have commented out session.end() because when the suite under line 47 starting with "with"...
 # the program will be terminated automatically....that's what with means
