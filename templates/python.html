@@ -1,0 +1,44 @@
+{%extends 'layout.html'%}
+{%block heading%}
+      {% if headline %} <!--python conditions-->
+       <h1 class="text-center">YES! HAPPY NEW YEAR</h1>
+      {% else %}
+      <h1>NO</h1>
+      {% endif %}<!--this line should be included because of jinja 2-->
+{%endblock%}
+{%block body%}
+      <ul>
+          {%for name in names%}
+          <li class="list">{{name}}</li>
+          {%endfor%}
+      </ul>
+           
+        <br>
+        <br>
+        <br>
+  
+        <div class="text-center"> 
+            <h1 class="font" h1 Bootstrap heading (2.5rem = 40px)>this is my <span class="test">new laptop</span> i bought.</h1><br>
+        </div>
+
+<p class="screen-only"><a href="{{url_for('more')}}">see more.....</a></p><br>
+
+<div>
+     <table>
+           <tr>
+               <th>name</th>
+               <th>age</th>
+           </tr>
+           <tr>
+               <td>alex</td>
+               <td>21</td>
+           </tr>
+       </table>
+       <form action="{{url_for('more')}}" method="POST" >
+           <input  type="text" placeholder="enter your username" name="name" ><br>
+            <input type="email" placeholder="email" name="email"><br>
+            <button type="button" class="btn btn-primary">submit</button>
+       </form>
+     </div>
+        {%endblock%}
+ 
