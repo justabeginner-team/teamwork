@@ -1,4 +1,3 @@
-
 def follow_a_users_followers(user_names):
     # interacts with given username(s) and follows their followers
     session.follow_user_followers(user_names, amount=5, randomize=True, sleep_delay=600)
@@ -7,12 +6,6 @@ def follow_a_users_followers(user_names):
 def follow_a_users_following(user_names):
     # interacts with given username(s) and follows people they are following
     session.follow_user_following(user_names, amount=5, randomize=True, sleep_delay=600)
-
-
-def acceptFollowRequests():
-    # amount the maximum amount of follow requests to accept
-    # sleep_delay time to sleep after every accepted request
-    session.accept_follow_requests(amount=100, sleep_delay=1)
 
 
 def follow_by_list(username_list):

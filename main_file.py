@@ -3,14 +3,15 @@ from instapy import InstaPy
 from instapy import smart_run
 from auto_like import liking_posts
 from auto_follow import follow_a_users_followers, \
-    follow_commenters_of_photos_of_users, follow_likers_of_users, follow_by_list, acceptFollowRequests, \
+    follow_commenters_of_photos_of_users, follow_likers_of_users, follow_by_list, \
     follow_a_users_following
 from story_view import view_stories_from_users, view_stories
 from quota_supervision import quota_supervision
 from general_settings import general_settings
 from unfollow_features import unfollow_all_who_dont_follow_back, unfollow_followed_by_instapy, unfollow_with_custom_list, just_unfollow_all
 from pods import engagement_pods, join_pods
-from follower_interaction import interacting_with_certain_user_followers
+from follower_interaction import interacting_with_certain_user_followers, interact_with_a_users_following
+from follow_requests import accept_request, remove_outgoing_requests
 
 # login credentials
 insta_username = input("Type your username: ")
@@ -47,6 +48,8 @@ specific_follow_list = []  # people to follow
 photo_likers_follow_list = []  # follow people who like the photos of these people
 photo_commenter_follow_list = []  # follow people who comment the photos of these people
 custom_unfollow_list = []  # people to unfollow / unfollow if they don't follow back
+usernames_to_interact_followers = []
+usernames_to_interact_following = []
 
 # get an InstaPy session!
 # set headless_browser=True to run InstaPy in the background
@@ -82,10 +85,10 @@ with smart_run():
     liking_posts(smart_tags)
     engagement_pods()
     join_pods(tags)
-    interacting_with_certain_user_followers(users_following)
+    interacting_with_certain_user_followers(usernames_to_interact_followers, comments)
+    interact_with_a_users_following(usernames_to_interact_following, comments)
     follow_a_users_followers(a_users_followers)
     follow_a_users_following(a_users_following)
-    acceptFollowRequests()
     view_stories(tags)
     view_stories_from_users(a_users_view_story_list)
     follow_by_list(specific_follow_list)
@@ -95,6 +98,8 @@ with smart_run():
     unfollow_followed_by_instapy()
     unfollow_all_who_dont_follow_back()
     just_unfollow_all()
+    accept_request()
+    remove_outgoing_requests()
 
 # NOTE:i have commented out session.end() because when the suite under line 47 starting with "with"...
 # the program will be terminated automatically....that's what with means
