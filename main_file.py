@@ -2,7 +2,7 @@
 from instapy import InstaPy
 from instapy import smart_run
 from auto_like import liking_posts
-from auto_follow import interacting_with_certain_user_followers, follow_a_users_followers, \
+from auto_follow import follow_a_users_followers, \
     follow_commenters_of_photos_of_users, follow_likers_of_users, follow_by_list, acceptFollowRequests, \
     follow_a_users_following
 from story_view import view_stories_from_users, view_stories
@@ -10,6 +10,7 @@ from quota_supervision import quota_supervision
 from general_settings import general_settings
 from unfollow_features import unfollow_all_who_dont_follow_back, unfollow_followed_by_instapy, unfollow_with_custom_list, just_unfollow_all
 from pods import engagement_pods, join_pods
+from follower_interaction import interacting_with_certain_user_followers
 
 # login credentials
 insta_username = input("Type your username: ")
