@@ -1,6 +1,7 @@
 # imports
 from instapy import InstaPy
 from instapy import smart_run
+from log_in_part import login
 from auto_like import liking_posts
 from auto_follow import follow_a_users_followers, \
     follow_commenters_of_photos_of_users, follow_likers_of_users, follow_by_list, \
@@ -8,7 +9,8 @@ from auto_follow import follow_a_users_followers, \
 from story_view import view_stories_from_users, view_stories
 from quota_supervision import quota_supervision
 from general_settings import general_settings
-from unfollow_features import unfollow_all_who_dont_follow_back, unfollow_followed_by_instapy, unfollow_with_custom_list, just_unfollow_all
+from unfollow_features import unfollow_all_who_dont_follow_back, unfollow_followed_by_instapy, \
+    unfollow_with_custom_list, just_unfollow_all
 from pods import engagement_pods, join_pods
 from follower_interaction import interacting_with_certain_user_followers, interact_with_a_users_following
 from follow_requests import accept_request, remove_outgoing_requests
@@ -17,6 +19,7 @@ from follow_requests import accept_request, remove_outgoing_requests
 insta_username = input("Type your username: ")
 insta_password = input("Type your password: ")
 
+# comments section
 comments = ['Nice shot! @{}',
             'I love your profile! @{}',
             'Your feed is an inspiration :thumbsup:',
@@ -31,10 +34,12 @@ comments = ['Nice shot! @{}',
             u"Sweet!😘",
             "Beautiful :heart_eyes:"]
 
+# hashtags section
 tags = ['engineer', 'bootstrap4', 'natgeo', 'biomedical', 'KU', 'python programming', 'BMW', 'iot', 'fashion',
         'web dev']
 smart_tags = ['science', 'arduino', 'cars', 'bikes']  # list for generating smart hashtags
 
+# user defined variables
 users_following = []  # list containing usernames whose followers
 # we want to interact like, comment, view story
 a_users_followers = []  # list containing usernames whose followers we want to follow
@@ -51,6 +56,7 @@ custom_unfollow_list = []  # people to unfollow / unfollow if they don't follow 
 usernames_to_interact_followers = []
 usernames_to_interact_following = []
 
+
 # get an InstaPy session!
 # set headless_browser=True to run InstaPy in the background
 # set bypass_security_challenge_using='email' to bypass any suspicious login attempt challenge
@@ -58,27 +64,11 @@ usernames_to_interact_following = []
 # set  want_check_browser=False to override checks like being online,
 # my connection and the availability of instagram severs
 
-
-def login(username, password):
-    try:
-        session = InstaPy(username=username,
-                          password=password,
-                          headless_browser=True,
-                          bypass_security_challenge_using='email',  # should we use an actual email?
-                          want_check_browser=False,
-                          disable_image_load=True,
-                          multi_logs=True)
-        return session
-    except:
-        print("Login error")
-
-
 # assigning the returned value by the login function to session
 session = login(insta_username, insta_password)
 
-
 # let's go now
-with smart_run():
+with smart_run(session):
     """ Activity flow """
     general_settings(dont_like_tags, ignore_dont_like_tags, users_to_ignore, friends_list)
     quota_supervision()
