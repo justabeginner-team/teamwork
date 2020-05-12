@@ -1,5 +1,5 @@
 # imports
-from instapy import InstaPy
+
 from instapy import smart_run
 from log_in_part import login
 from auto_like import liking_posts

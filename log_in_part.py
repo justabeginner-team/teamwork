@@ -1,8 +1,11 @@
+from instapy import InstaPy
+
+
 def login(username, password):
     try:
         session = InstaPy(username=username,
                           password=password,
-                          headless_browser=True,
+                          nogui=True,
                           bypass_security_challenge_using='email',  # should we use an actual email?
                           want_check_browser=False,
                           disable_image_load=True,
